@@ -1,6 +1,7 @@
 // =========================== dependencies start here =========================== // 
 const mysql = require('mysql2');
 const cTable = require('console.table');
+const inquirer = require('inquirer');
 // =========================== dependencies end here =========================== // 
 
 // ========== connection functions start here ========== //
@@ -25,9 +26,9 @@ connection.connect(err => {
 // ========== query functions start here ========== //
 const viewDepartments = () => {
     console.log('\n');
-    console.log('--------------------');
-    console.log('Showing Departments:');
-    console.log('--------------------');
+    console.log('-------------------');
+    console.log('Showing Departments');
+    console.log('-------------------');
 
     connection.query(
         'SELECT * FROM departments',
@@ -41,9 +42,9 @@ const viewDepartments = () => {
 
 const viewRoles = () => {
     console.log('\n');
-    console.log('--------------');
-    console.log('Showing Roles:');
-    console.log('--------------');
+    console.log('-------------');
+    console.log('Showing Roles');
+    console.log('-------------');
 
     connection.query(
         'SELECT roles.id, role_title, dept_name, salary FROM roles LEFT JOIN departments ON roles.department_id = departments.id',
@@ -57,13 +58,11 @@ const viewRoles = () => {
 
 const viewEmployees = () => {
     console.log('\n');
-    console.log('------------------');
-    console.log('Showing Employees:');
-    console.log('------------------');
+    console.log('-----------------');
+    console.log('Showing Employees');
+    console.log('-----------------');
 
     connection.query(
-        // 'SELECT employee_id, first_name, last_name, role_title, salary FROM employees LEFT JOIN roles ON employees.role_id = roles.role_id',
-        // 'SELECT employee_id, first_name, last_name, role_title, salary FROM roles RIGHT JOIN employees ON employees.role_id = roles.role_id',
         `SELECT employees.id, employees.first_name, employees.last_name, role_title, dept_name, salary,
         CONCAT(manager_alias.first_name, ' ', manager_alias.last_name) AS manager_name FROM roles
             RIGHT JOIN employees ON employees.id = roles.id
@@ -78,11 +77,50 @@ const viewEmployees = () => {
     );
 };
 
+const addDepartment = () => {
+    console.log('\n');
+    console.log('---------------------');
+    console.log('Adding New Department');
+    console.log('---------------------');
+
+    return inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'dept_name',
+                message: 'Please type in a department name:',
+                validate: deptInput => {
+                    if (deptInput) {
+                        return true;
+                    } else {
+                        console.log("Please enter a department name.");
+                        return false;
+                    }
+                }
+            }
+        ])
+        .then(newDept => {
+            console.log(newDept);
+
+            connection.query(
+                'INSERT INTO departments SET ?', newDept,
+
+                function(err, res) {
+                    if (err) throw err;
+                    console.log('\nDepartment has been added!');
+                    viewDepartments();
+                }
+            );
+        })
+    ;
+};
+
 // ========== query functions end here ========== //
 
 // ========== export query functions ========== //
 module.exports = {
     viewDepartments,
     viewRoles,
-    viewEmployees
+    viewEmployees,
+    addDepartment
 };
