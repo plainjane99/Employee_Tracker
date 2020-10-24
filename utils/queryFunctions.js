@@ -1,9 +1,9 @@
 // =========================== dependencies start here =========================== // 
-const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const cTable = require('console.table');
 // =========================== dependencies end here =========================== // 
 
+// ========== connection functions start here ========== //
 const connection = mysql.createConnection({
     host: 'localhost',
     port: 3306,
@@ -20,8 +20,10 @@ connection.connect(err => {
     console.log('Welcome to Employee Tracker. \n');
     promptUser();
 });
+// ========== connection functions end here ========== //
 
-viewDepartments = () => {
+// ========== query functions start here ========== //
+const viewDepartments = () => {
     console.log('\nShowing Departments:');
 
     connection.query(
@@ -29,26 +31,27 @@ viewDepartments = () => {
         function(err, res) {
             if (err) throw err;
             console.table(res);
+            promptUser();
         }
-    )
-}
-  
-promptUser = () => {
+    );
+};
 
-    return inquirer.prompt([
-        { 
-            type: 'list',
-            message: 'Please select an option.',
-            name: 'selection',
-            choices: ['View Departments', 'View Roles', 'View Employees', 'Add Department', 'Add Role', 'Add Employee', 'Update Employee Role']
+const viewRoles = () => {
+    console.log('\nShowing Roles:');
+
+    connection.query(
+        'SELECT * FROM roles',
+        function(err, res) {
+            if (err) throw err;
+            console.table(res);
+            promptUser();
         }
-    ])
-        .then(chosen => {
+    );
+};
+// ========== query functions end here ========== //
 
-            if (chosen.selection === 'View Departments') {
-                viewDepartments();
-            }
-        })
-    ;
-
+// ========== export query functions ========== //
+module.exports = {
+    viewDepartments,
+    viewRoles
 };
