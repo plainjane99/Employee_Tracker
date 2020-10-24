@@ -24,7 +24,10 @@ connection.connect(err => {
 
 // ========== query functions start here ========== //
 const viewDepartments = () => {
-    console.log('\nShowing Departments:');
+    console.log('\n');
+    console.log('--------------------');
+    console.log('Showing Departments:');
+    console.log('--------------------');
 
     connection.query(
         'SELECT * FROM departments',
@@ -37,10 +40,13 @@ const viewDepartments = () => {
 };
 
 const viewRoles = () => {
-    console.log('\nShowing Roles:');
+    console.log('\n');
+    console.log('--------------');
+    console.log('Showing Roles:');
+    console.log('--------------');
 
     connection.query(
-        'SELECT role_id, role_title, dept_name, salary FROM roles LEFT JOIN departments ON roles.department_id = departments.dept_id',
+        'SELECT roles.id, role_title, dept_name, salary FROM roles LEFT JOIN departments ON roles.department_id = departments.id',
         function(err, res) {
             if (err) throw err;
             console.table(res);
@@ -48,10 +54,35 @@ const viewRoles = () => {
         }
     );
 };
+
+const viewEmployees = () => {
+    console.log('\n');
+    console.log('------------------');
+    console.log('Showing Employees:');
+    console.log('------------------');
+
+    connection.query(
+        // 'SELECT employee_id, first_name, last_name, role_title, salary FROM employees LEFT JOIN roles ON employees.role_id = roles.role_id',
+        // 'SELECT employee_id, first_name, last_name, role_title, salary FROM roles RIGHT JOIN employees ON employees.role_id = roles.role_id',
+        `SELECT employees.id, employees.first_name, employees.last_name, role_title, dept_name, salary,
+        CONCAT(manager_alias.first_name, ' ', manager_alias.last_name) AS manager_name FROM roles
+            RIGHT JOIN employees ON employees.id = roles.id
+            RIGHT JOIN departments ON roles.department_id = departments.id
+            LEFT JOIN employees AS manager_alias ON employees.manager_id = manager_alias.id`,
+            
+        function(err, res) {
+            if (err) throw err;
+            console.table(res);
+            promptUser();
+        }
+    );
+};
+
 // ========== query functions end here ========== //
 
 // ========== export query functions ========== //
 module.exports = {
     viewDepartments,
-    viewRoles
+    viewRoles,
+    viewEmployees
 };

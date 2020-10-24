@@ -20,10 +20,10 @@ INSERT INTO employees (first_name, last_name, role_id, manager_id)
 VALUES
     ('Jean-Luc', 'Picard', 1, NULL),
     ('William', 'Riker', 2, 1),
-    ('Data', NULL, 3, 2),
-    ('Geordi', 'LaForge', 4, 1),
-    ('Tasha', 'Yar', 5, 1),
+    ('Data', "Soong", 3, 2),
+    ('Geordi', 'LaForge', 4, 2),
+    ('Tasha', 'Yar', 5, 2),
     ('Reginald', 'Barclay', 6, 4),
-    ('Worf', NULL, 7, 5),
+    ('Worf', 'House of Mogh', 7, 5),
     ('Beverly', 'Crusher', 8, 1),
     ('Alyssa', 'Ogawa', 9, 8);

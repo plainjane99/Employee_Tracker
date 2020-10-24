@@ -1,7 +1,7 @@
 // =========================== dependencies start here =========================== // 
 const inquirer = require('inquirer');
 
-const { viewDepartments, viewRoles } = require('./utils/queryFunctions');
+const { viewDepartments, viewRoles, viewEmployees } = require('./utils/queryFunctions');
 // =========================== dependencies end here =========================== // 
 
 promptUser = () => {
@@ -23,6 +23,11 @@ promptUser = () => {
             if (chosen.selection === 'View Roles') {
                 viewRoles();
             }
+
+            if (chosen.selection === 'View Employees') {
+                viewEmployees();
+            }
+
         })
     ;
 };
