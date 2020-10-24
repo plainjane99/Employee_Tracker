@@ -40,7 +40,7 @@ const viewRoles = () => {
     console.log('\nShowing Roles:');
 
     connection.query(
-        'SELECT * FROM roles',
+        'SELECT role_id, role_title, dept_name, salary FROM roles LEFT JOIN departments ON roles.department_id = departments.dept_id',
         function(err, res) {
             if (err) throw err;
             console.table(res);
