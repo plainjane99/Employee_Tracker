@@ -312,6 +312,64 @@ const updateEmployeeRole = () => {
         })      
     ;    
 }
+
+const updateEmployeeManager = () => {
+    console.log('----------------------------');
+    console.log('Updating Employee Manager...');
+    console.log('----------------------------');
+
+    return inquirer
+        .prompt([
+            {
+                type: 'number',
+                name: 'id',
+                message: "Please type in the id of the employee whose manager is to be updated:",
+                validate: idInput => {
+                    if (idInput) {
+                        return true;
+                    } else {
+                        console.log("Please enter employee id.");
+                        return false;
+                    }
+                }
+            },
+            {
+                type: 'number',
+                name: 'manager_id',
+                message: "Please type in the id of the employee's new manager:",
+                validate: idInput => {
+                    if (idInput) {
+                        return true;
+                    } else {
+                        console.log("Please enter manager id.");
+                        return false;
+                    }
+                }
+            }
+        ])
+
+        .then(managerUpdate => {
+            console.log(managerUpdate);
+
+            const sql = 'UPDATE employees SET manager_id = ? WHERE id = ?';
+            const params = [managerUpdate.manager_id, managerUpdate.id];
+
+            connection.query(sql, params,
+
+                function(err, res) {
+                    if (err) throw err;
+                    console.log(res);
+                    console.log('\n<----- Employee manager has been updated. ----->');
+                    viewEmployees();
+                }
+            )
+        })
+        .catch(err => {
+            console.log(err);
+        })      
+    ;    
+}
+
 // ========== query functions end here ========== //
 
 // ========== export query functions ========== //
@@ -323,4 +381,5 @@ module.exports = {
     addRole,
     addEmployee,
     updateEmployeeRole,
+    updateEmployeeManager
 };

@@ -2,7 +2,8 @@
 const inquirer = require('inquirer');
 
 const { viewDepartments, viewRoles, viewEmployees,
-    addDepartment, addRole, addEmployee, updateEmployeeRole } = require('./utils/queryFunctions');
+    addDepartment, addRole, addEmployee,
+    updateEmployeeRole, updateEmployeeManager } = require('./utils/queryFunctions');    
 // =========================== dependencies end here =========================== // 
 
 promptUser = () => {
@@ -14,7 +15,7 @@ promptUser = () => {
             name: 'selection',
             choices: ['View Departments', 'View Roles', 'View Employees',
             'Add Department', 'Add Role', 'Add Employee', 'Update Employee Role',
-            'Exit Tracker']
+            'Update Employee Manager']
         }
     ])
         .then(chosen => {
@@ -45,6 +46,10 @@ promptUser = () => {
 
             if (chosen.selection === 'Update Employee Role') {
                 updateEmployeeRole();
+            }
+
+            if (chosen.selection === "Update Employee Manager") {
+                updateEmployeeManager();
             }
 
         })
