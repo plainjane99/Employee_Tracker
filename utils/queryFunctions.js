@@ -26,9 +26,9 @@ connection.connect(err => {
 // ========== query functions start here ========== //
 const viewDepartments = () => {
     console.log('\n');
-    console.log('-------------------');
-    console.log('Showing Departments');
-    console.log('-------------------');
+    console.log('----------------------');
+    console.log('Showing Departments...');
+    console.log('----------------------');
 
     connection.query(
         'SELECT * FROM departments',
@@ -42,9 +42,9 @@ const viewDepartments = () => {
 
 const viewRoles = () => {
     console.log('\n');
-    console.log('-------------');
-    console.log('Showing Roles');
-    console.log('-------------');
+    console.log('----------------');
+    console.log('Showing Roles...');
+    console.log('----------------');
 
     connection.query(
         'SELECT roles.id, role_title, dept_name, salary FROM roles LEFT JOIN departments ON roles.department_id = departments.id',
@@ -58,9 +58,9 @@ const viewRoles = () => {
 
 const viewEmployees = () => {
     console.log('\n');
-    console.log('-----------------');
-    console.log('Showing Employees');
-    console.log('-----------------');
+    console.log('--------------------');
+    console.log('Showing Employees...');
+    console.log('--------------------');
 
     connection.query(
         `SELECT employees.id, employees.first_name, employees.last_name, role_title, dept_name, salary,
@@ -79,9 +79,9 @@ const viewEmployees = () => {
 
 const addDepartment = () => {
     console.log('\n');
-    console.log('---------------------');
-    console.log('Adding New Department');
-    console.log('---------------------');
+    console.log('------------------------');
+    console.log('Adding New Department...');
+    console.log('------------------------');
 
     return inquirer
         .prompt([
@@ -100,20 +100,85 @@ const addDepartment = () => {
             }
         ])
         .then(newDept => {
-            console.log(newDept);
 
             connection.query(
                 'INSERT INTO departments SET ?', newDept,
 
                 function(err, res) {
                     if (err) throw err;
-                    console.log('\nDepartment has been added!');
+                    console.log('\nNew Department has been added!');
                     viewDepartments();
                 }
             );
         })
     ;
 };
+
+const addRole = () => {
+    console.log('\n');
+    console.log('------------------');
+    console.log('Adding New Role...');
+    console.log('------------------');
+
+    return inquirer
+        .prompt([
+            {
+                type: 'number',
+                name: 'department_id',
+                message: 'Please type in the department ID in which the role belongs:',
+                validate: deptInput => {
+                    if (deptInput) {
+                        return true;
+                    } else {
+                        console.log("Please enter a department ID.");
+                        return false;
+                    }
+                }
+            },
+            {
+                type: 'input',
+                name: 'role_title',
+                message: 'Please type in the role title:',
+                validate: deptInput => {
+                    if (deptInput) {
+                        return true;
+                    } else {
+                        console.log("Please enter a role title.");
+                        return false;
+                    }
+                }
+            },
+            {
+                type: 'number',
+                name: 'salary',
+                message: 'Please type in the salary for this role title:',
+                validate: deptInput => {
+                    if (deptInput) {
+                        return true;
+                    } else {
+                        console.log("Please enter a department ID.");
+                        return false;
+                    }
+                }
+            }
+        ])
+
+        .then(newRole => {
+            console.log(newRole);
+
+            connection.query(
+                'INSERT INTO roles SET ?', newRole,
+
+                function(err, res) {
+                    if (err) throw err;
+                    console.log('\nNew Role has been added!');
+                    viewRoles();
+                }
+            );
+        })
+    ;    
+};
+
 
 // ========== query functions end here ========== //
 
@@ -122,5 +187,6 @@ module.exports = {
     viewDepartments,
     viewRoles,
     viewEmployees,
-    addDepartment
+    addDepartment,
+    addRole
 };
