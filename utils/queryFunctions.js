@@ -25,7 +25,6 @@ connection.connect(err => {
 
 // ========== query functions start here ========== //
 const viewDepartments = () => {
-    console.log('\n');
     console.log('----------------------');
     console.log('Showing Departments...');
     console.log('----------------------');
@@ -41,7 +40,6 @@ const viewDepartments = () => {
 };
 
 const viewRoles = () => {
-    console.log('\n');
     console.log('----------------');
     console.log('Showing Roles...');
     console.log('----------------');
@@ -57,7 +55,6 @@ const viewRoles = () => {
 };
 
 const viewEmployees = () => {
-    console.log('\n');
     console.log('--------------------');
     console.log('Showing Employees...');
     console.log('--------------------');
@@ -66,7 +63,7 @@ const viewEmployees = () => {
         `SELECT employees.id, employees.first_name, employees.last_name, role_title, dept_name, salary,
         CONCAT(manager_alias.first_name, ' ', manager_alias.last_name) AS manager_name FROM roles
             RIGHT JOIN employees ON employees.id = roles.id
-            RIGHT JOIN departments ON roles.department_id = departments.id
+            LEFT JOIN departments ON roles.department_id = departments.id
             LEFT JOIN employees AS manager_alias ON employees.manager_id = manager_alias.id`,
             
         function(err, res) {
@@ -78,7 +75,6 @@ const viewEmployees = () => {
 };
 
 const addDepartment = () => {
-    console.log('\n');
     console.log('------------------------');
     console.log('Adding New Department...');
     console.log('------------------------');
@@ -106,7 +102,7 @@ const addDepartment = () => {
 
                 function(err, res) {
                     if (err) throw err;
-                    console.log('\nNew Department has been added!');
+                    console.log('\n<----- New Department has been added as id = ' + res.insertId + '. ----->');
                     viewDepartments();
                 }
             );
@@ -115,7 +111,6 @@ const addDepartment = () => {
 };
 
 const addRole = () => {
-    console.log('\n');
     console.log('------------------');
     console.log('Adding New Role...');
     console.log('------------------');
@@ -126,8 +121,8 @@ const addRole = () => {
                 type: 'number',
                 name: 'department_id',
                 message: 'Please type in the department ID in which the role belongs:',
-                validate: deptInput => {
-                    if (deptInput) {
+                validate: deptIdInput => {
+                    if (deptIdInput) {
                         return true;
                     } else {
                         console.log("Please enter a department ID.");
@@ -139,8 +134,8 @@ const addRole = () => {
                 type: 'input',
                 name: 'role_title',
                 message: 'Please type in the role title:',
-                validate: deptInput => {
-                    if (deptInput) {
+                validate: roleInput => {
+                    if (roleInput) {
                         return true;
                     } else {
                         console.log("Please enter a role title.");
@@ -152,11 +147,11 @@ const addRole = () => {
                 type: 'number',
                 name: 'salary',
                 message: 'Please type in the salary for this role title:',
-                validate: deptInput => {
-                    if (deptInput) {
+                validate: salaryInput => {
+                    if (salaryInput) {
                         return true;
                     } else {
-                        console.log("Please enter a department ID.");
+                        console.log("Please enter a salary.");
                         return false;
                     }
                 }
@@ -171,11 +166,93 @@ const addRole = () => {
 
                 function(err, res) {
                     if (err) throw err;
-                    console.log('\nNew Role has been added!');
+                    console.log('\n<----- New Role has been added as id = ' + res.insertId + '. ----->');
                     viewRoles();
                 }
             );
         })
+    ;    
+};
+
+const addEmployee = () => {
+    console.log('----------------------');
+    console.log('Adding New Employee...');
+    console.log('----------------------');
+
+    return inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'first_name',
+                message: "Please type in the employee's first name:",
+                validate: firstNameInput => {
+                    if (firstNameInput) {
+                        return true;
+                    } else {
+                        console.log("Please enter the first name.");
+                        return false;
+                    }
+                }
+            },
+            {
+                type: 'input',
+                name: 'last_name',
+                message: "Please type in the employee's last name:",
+                validate: lastNameInput => {
+                    if (lastNameInput) {
+                        return true;
+                    } else {
+                        console.log("Please enter the last name.");
+                        return false;
+                    }
+                }
+            },
+            {
+                type: 'number',
+                name: 'role_id',
+                message: 'Please type in the role ID number:',
+                validate: roleInput => {
+                    if (roleInput) {
+                        return true;
+                    } else {
+                        console.log("Please enter a role ID number.");
+                        return false;
+                    }
+                }
+            },
+            {
+                type: 'number',
+                name: 'manager_id',
+                message: 'Please type in the manager ID number:',
+                validate: managerInput => {
+                    if (managerInput) {
+                        return true;
+                    } else {
+                        console.log("Please enter a manager ID number.");
+                        return false;
+                    }
+                }
+            }
+        ])
+
+        .then(newEmployee => {
+            console.log(newEmployee);
+
+            const sql = 'INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)';
+            const params = [newEmployee.first_name, newEmployee.last_name, newEmployee.role_id, newEmployee.manager_id];
+
+            connection.query(sql, params,
+
+                function(err, res) {
+                    if (err) throw err;
+                    console.log('\n<----- New Employee has been added as id = ' + res.insertId + '. ----->');
+                    viewEmployees();
+                }
+            )
+        })
+        .catch(err => {
+            console.log(err);
+        })      
     ;    
 };
 
@@ -188,5 +265,6 @@ module.exports = {
     viewRoles,
     viewEmployees,
     addDepartment,
-    addRole
+    addRole,
+    addEmployee
 };
