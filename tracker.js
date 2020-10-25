@@ -1,7 +1,8 @@
 // =========================== dependencies start here =========================== // 
 const inquirer = require('inquirer');
 
-const { viewDepartments, viewRoles, viewEmployees, addDepartment, addRole, addEmployee } = require('./utils/queryFunctions');
+const { viewDepartments, viewRoles, viewEmployees,
+    addDepartment, addRole, addEmployee, updateEmployeeRole } = require('./utils/queryFunctions');
 // =========================== dependencies end here =========================== // 
 
 promptUser = () => {
@@ -11,7 +12,9 @@ promptUser = () => {
             type: 'list',
             message: 'Please select an option.',
             name: 'selection',
-            choices: ['View Departments', 'View Roles', 'View Employees', 'Add Department', 'Add Role', 'Add Employee', 'Update Employee Role']
+            choices: ['View Departments', 'View Roles', 'View Employees',
+            'Add Department', 'Add Role', 'Add Employee', 'Update Employee Role',
+            'Exit Tracker']
         }
     ])
         .then(chosen => {
@@ -39,6 +42,11 @@ promptUser = () => {
             if (chosen.selection === 'Add Employee') {
                 addEmployee();
             }
+
+            if (chosen.selection === 'Update Employee Role') {
+                updateEmployeeRole();
+            }
+
         })
     ;
 };

@@ -62,7 +62,7 @@ const viewEmployees = () => {
     connection.query(
         `SELECT employees.id, employees.first_name, employees.last_name, role_title, dept_name, salary,
         CONCAT(manager_alias.first_name, ' ', manager_alias.last_name) AS manager_name FROM roles
-            RIGHT JOIN employees ON employees.id = roles.id
+            RIGHT JOIN employees ON employees.role_id = roles.id
             LEFT JOIN departments ON roles.department_id = departments.id
             LEFT JOIN employees AS manager_alias ON employees.manager_id = manager_alias.id`,
             
@@ -114,7 +114,7 @@ const addRole = () => {
     console.log('------------------');
     console.log('Adding New Role...');
     console.log('------------------');
-
+ 
     return inquirer
         .prompt([
             {
@@ -210,7 +210,7 @@ const addEmployee = () => {
             {
                 type: 'number',
                 name: 'role_id',
-                message: 'Please type in the role ID number:',
+                message: "Please type in the ID of the employee's role:",
                 validate: roleInput => {
                     if (roleInput) {
                         return true;
@@ -223,7 +223,7 @@ const addEmployee = () => {
             {
                 type: 'number',
                 name: 'manager_id',
-                message: 'Please type in the manager ID number:',
+                message: "Please type in the ID of the employee's manager:",
                 validate: managerInput => {
                     if (managerInput) {
                         return true;
@@ -256,7 +256,62 @@ const addEmployee = () => {
     ;    
 };
 
+const updateEmployeeRole = () => {
+    console.log('-------------------------');
+    console.log('Updating Employee Role...');
+    console.log('-------------------------');
 
+    return inquirer
+        .prompt([
+            {
+                type: 'number',
+                name: 'id',
+                message: "Please type in the id of the employee whose role is to be updated:",
+                validate: idInput => {
+                    if (idInput) {
+                        return true;
+                    } else {
+                        console.log("Please enter employee id.");
+                        return false;
+                    }
+                }
+            },
+            {
+                type: 'number',
+                name: 'role_id',
+                message: "Please type in the id of the employee's new role:",
+                validate: idInput => {
+                    if (idInput) {
+                        return true;
+                    } else {
+                        console.log("Please enter role id.");
+                        return false;
+                    }
+                }
+            }
+        ])
+
+        .then(roleUpdate => {
+            console.log(roleUpdate);
+
+            const sql = 'UPDATE employees SET role_id = ? WHERE id = ?';
+            const params = [roleUpdate.role_id, roleUpdate.id];
+
+            connection.query(sql, params,
+
+                function(err, res) {
+                    if (err) throw err;
+                    console.log(res);
+                    console.log('\n<----- Employee Role has been updated. ----->');
+                    viewEmployees();
+                }
+            )
+        })
+        .catch(err => {
+            console.log(err);
+        })      
+    ;    
+}
 // ========== query functions end here ========== //
 
 // ========== export query functions ========== //
@@ -266,5 +321,6 @@ module.exports = {
     viewEmployees,
     addDepartment,
     addRole,
-    addEmployee
+    addEmployee,
+    updateEmployeeRole,
 };
