@@ -159,7 +159,6 @@ const addRole = () => {
         ])
 
         .then(newRole => {
-            console.log(newRole);
 
             connection.query(
                 'INSERT INTO roles SET ?', newRole,
@@ -236,7 +235,6 @@ const addEmployee = () => {
         ])
 
         .then(newEmployee => {
-            console.log(newEmployee);
 
             const sql = 'INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)';
             const params = [newEmployee.first_name, newEmployee.last_name, newEmployee.role_id, newEmployee.manager_id];
@@ -292,7 +290,6 @@ const updateEmployeeRole = () => {
         ])
 
         .then(roleUpdate => {
-            console.log(roleUpdate);
 
             const sql = 'UPDATE employees SET role_id = ? WHERE id = ?';
             const params = [roleUpdate.role_id, roleUpdate.id];
@@ -349,7 +346,6 @@ const updateEmployeeManager = () => {
         ])
 
         .then(managerUpdate => {
-            console.log(managerUpdate);
 
             const sql = 'UPDATE employees SET manager_id = ? WHERE id = ?';
             const params = [managerUpdate.manager_id, managerUpdate.id];
